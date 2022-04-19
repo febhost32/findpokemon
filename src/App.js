@@ -1,23 +1,33 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 
 function App() {
+  const [ability, setAbility] = React.useState(null);
+  const [result, setResult] = React.useState(null);
+
+  React.useEffect(() => {
+    if (result){
+    getPokemonName(result);
+    }
+  }, [result])
+
+
+  function clickHandler(ability) {
+      fetch(`https://pokeapi.co/api/v2/ability/${ability}`)
+      .then((res) => res.json())
+      .then((data) => setResult(data))
+      .catch((e) => console.log(e));
+  }
+
+  const getPokemonName = (result) => {
+    return result.pokemon.map((x) => <p>{x.pokemon.name}</p>);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="text" id="abilityName" onChange={(e) => setAbility(e.target.value)} />
+      <button type='button' onClick={() => clickHandler(ability)}>Search</button>
+      {result && getPokemonName(result)}
     </div>
   );
 }
